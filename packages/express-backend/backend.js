@@ -125,6 +125,8 @@ server than that which served the page—initiated from scripts. This means that
 APIs can only request resources from the same origin the application was loaded from, unless the response 
 from other origins includes the right CORS headers. */
 
-/* show i throw error after 201 or not */
+/* show i throw error after 404 or not */
+
+/* should i replace the id if the person already has an id */
 
 /* use users["users_list"] or users.users_list */
