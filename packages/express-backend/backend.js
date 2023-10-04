@@ -45,11 +45,33 @@ const users = {
         }
     ]
 }
+
+const findUserByName = (name) => { 
+    return users['users_list']
+        .filter( (user) => user['name'] === name); 
+}
+
 app.get('/users', (req, res) => {
-    res.send(users);
+    const name = req.query.name;
+    if (name != undefined){
+        let result = findUserByName(name);
+        result = {users_list: result};
+        res.send(result);
+    }
+    else{
+        res.send(users);
+    }
 });
 
 /* Finally, we make our backend server listen to incoming http requests on the defined port number. */
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });      
+
+/*
+Lastly, if you want debug information (like knowing when a GET, POST method is called in the backend), 
+set a DEBUG environment variable which will tell node to print debug messages.  
+For example, on a Mac/Linux you would type the following before starting nodemon/node.
+
+export DEBUG='express:router'
+*/
