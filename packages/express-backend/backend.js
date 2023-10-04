@@ -1,11 +1,15 @@
 /* First, we import the Express module. Express will work as an HTTP middleware dispatching 
 HTTP calls to the routes we define in the file and also sending back responses that we'll program. */
 import express from "express";
+import cors from "cors";
 
 /* Next, we create an instance of Express and define a constant to represent the port number we'll 
 use to listen to incoming HTTP requests. */
 const app = express();
 const port = 8000;
+
+/* enable all CORS requests is this one line of code: */
+app.use(cors());
 
 /* On the fourth line, we set up our express app to process incoming data in JSON format. With 
 that, Express (as a middleware) will allow us to access JSON data seamlessly in memory. */
@@ -104,5 +108,9 @@ For example, on a Mac/Linux you would type the following before starting nodemon
 export DEBUG='express:router'
 */
 
-/* ask if delete is correct w/ changing list to let */
 /* ask for purpose of helper functions */
+
+/*  For security reasons, browsers restrict cross-origin HTTP requests—for resources on a different 
+server than that which served the page—initiated from scripts. This means that a web application calling 
+APIs can only request resources from the same origin the application was loaded from, unless the response 
+from other origins includes the right CORS headers. */
