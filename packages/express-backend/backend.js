@@ -47,6 +47,7 @@ const users = {
 };
 
 const findUserByName = (name) => users['users_list'].filter( (user) => user['name'] === name); 
+const findUserByJob = (job) => users['users_list'].filter( (user) => user['job'] === job); 
 const findUserById = (id) => users['users_list'].find((user) => user['id'] === id);
 const addUser = (user) => {
     users['users_list'].push(user);
@@ -55,14 +56,17 @@ const addUser = (user) => {
 
 app.get('/users', (req, res) => {
     const name = req.query.name;
-    if (name != undefined){
-        let result = findUserByName(name);
-        result = {users_list: result};
-        res.send(result);
+    const job = req.query.job;
+    let result = users
+
+    if (name) {
+        result = {users_list: findUserByName(name)};
     }
-    else{
-        res.send(users);
+    if (job) {
+        result = {users_list: findUserByJob(job)};
     }
+
+    res.send(result);
 });
 
 app.get('/users/:id', (req,res) => {
@@ -81,6 +85,12 @@ app.post('/users', (req, res) => {
     res.send();
 });
 
+app.delete('/users/:id', (req, res) => {
+    const id = req.params.id;
+    users.users_list = users['users_list'].filter((user) => user['id'] !== id);
+    res.send();
+})
+
 /* Finally, we make our backend server listen to incoming http requests on the defined port number. */
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
@@ -93,3 +103,6 @@ For example, on a Mac/Linux you would type the following before starting nodemon
 
 export DEBUG='express:router'
 */
+
+/* ask if delete is correct w/ changing list to let */
+/* ask for purpose of helper functions */
