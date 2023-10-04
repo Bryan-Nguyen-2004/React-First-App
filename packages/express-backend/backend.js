@@ -84,15 +84,25 @@ app.get('/users/:id', (req,res) => {
 });
 
 app.post('/users', (req, res) => {
-    const userToAdd = req.body;
+    let userToAdd = req.body;
+    if (!userToAdd.hasOwnProperty('id')) {
+        const id = userToAdd['id'] = Math.floor(Math.random()*1000000).toString().substr(0,6);
+        userToAdd = Object.assign({ id }, userToAdd);
+    }
     addUser(userToAdd);
-    res.send();
+    res.status(201).send(userToAdd);
 });
 
 app.delete('/users/:id', (req, res) => {
     const id = req.params.id;
-    users.users_list = users['users_list'].filter((user) => user['id'] !== id);
-    res.send();
+    const filtered = users['users_list'].filter((user) => user['id'] !== id);
+
+    if (filtered.length === users.users_list.length) {
+        res.status(404).send();
+    } else {
+        users["users_list"] = filtered
+        res.status(204).send();
+    }
 })
 
 /* Finally, we make our backend server listen to incoming http requests on the defined port number. */
@@ -114,3 +124,7 @@ export DEBUG='express:router'
 server than that which served the page—initiated from scripts. This means that a web application calling 
 APIs can only request resources from the same origin the application was loaded from, unless the response 
 from other origins includes the right CORS headers. */
+
+/* show i throw error after 201 or not */
+
+/* use users["users_list"] or users.users_list */

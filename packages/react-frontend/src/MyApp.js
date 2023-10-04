@@ -7,22 +7,6 @@ import Form from "./Form";
 function MyApp() {
   const [characters, setCharacters] = useState([]);
 
-  function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => {
-      return i !== index;
-    });
-    setCharacters(updated);
-  }
-
-  useEffect(() => {
-    fetchUsers()
-      .then((res) => res.json())
-      .then((json) => setCharacters(json["users_list"]))
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
   /* Note that this function does not return the data immediately—it instead returns a Promise. 
   Promises are useful when we need to perform an operation which will take some time to finish, 
   or may never finish. We don't want our code to wait for the data to come back to the server, 
@@ -49,13 +33,55 @@ function MyApp() {
     return promise;
   }
 
+  function deleteUser(id) {
+    const promise = fetch(`http://localhost:8000/users/${id}`, {
+      method: "DELETE",
+    });
+    return promise;
+  }
+
+  function removeOneCharacter(index) {
+    deleteUser(characters[index].id)
+      .then((response) => {
+        if (response.status === 204) {
+          const updated = characters.filter((_, i) => i !== index);
+          setCharacters(updated);
+        } else if (response.status === 404) {
+          throw new Error(`${response.status}: Resource not found`);
+        } else {
+          throw new Error(`${response.status}: Unable to delete user`);
+        }
+      })
+      .then((error) => {
+        console.log(error);
+      });
+  }
+
   function updateList(person) {
     postUser(person)
-      .then(() => setCharacters([...characters, person]))
+      .then((response) => {
+        if (response.status === 201) {
+          return response.json();
+        } else {
+          throw new Error("Unable to post user");
+        }
+      })
+      .then((json) => {
+        setCharacters([...characters, json]);
+      })
       .catch((error) => {
         console.log(error);
       });
   }
+
+  useEffect(() => {
+    fetchUsers()
+      .then((res) => res.json())
+      .then((json) => setCharacters(json["users_list"]))
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <div className="container">
