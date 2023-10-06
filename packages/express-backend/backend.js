@@ -109,26 +109,3 @@ app.delete('/users/:id', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });      
-
-/*
-Lastly, if you want debug information (like knowing when a GET, POST method is called in the backend), 
-set a DEBUG environment variable which will tell node to print debug messages.  
-For example, on a Mac/Linux you would type the following before starting nodemon/node.
-export DEBUG='express:router'
-
-On Windows, you would type the following before starting nodemon/node.
-set DEBUG=express:router
-*/
-
-/* ask for purpose of helper functions */
-
-/*  For security reasons, browsers restrict cross-origin HTTP requests—for resources on a different 
-server than that which served the page—initiated from scripts. This means that a web application calling 
-APIs can only request resources from the same origin the application was loaded from, unless the response 
-from other origins includes the right CORS headers. */
-
-/* show i throw error after 404 or not */
-
-/* should i replace the id if the person already has an id */
-
-/* use users["users_list"] or users.users_list */
