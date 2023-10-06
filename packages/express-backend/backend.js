@@ -86,7 +86,7 @@ app.get('/users/:id', (req,res) => {
 app.post('/users', (req, res) => {
     let userToAdd = req.body;
     if (!userToAdd.hasOwnProperty('id')) {
-        const id = userToAdd['id'] = Math.floor(Math.random()*1000000).toString().substr(0,6);
+        const id = Math.floor(100000 + (Math.random() * 900000))
         userToAdd = Object.assign({ id }, userToAdd);
     }
     addUser(userToAdd);
@@ -114,8 +114,10 @@ app.listen(port, () => {
 Lastly, if you want debug information (like knowing when a GET, POST method is called in the backend), 
 set a DEBUG environment variable which will tell node to print debug messages.  
 For example, on a Mac/Linux you would type the following before starting nodemon/node.
-
 export DEBUG='express:router'
+
+On Windows, you would type the following before starting nodemon/node.
+set DEBUG=express:router
 */
 
 /* ask for purpose of helper functions */
