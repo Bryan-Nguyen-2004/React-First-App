@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd packages/react-frontend && npm start ",
-    "backend": "cd packages/express-backend && npx nodemon backend.js"
+    "backend2": "node packages/express-backend/backend.js",
+    "backend": "npx nodemon packages/express-backend/backend.js",
+    "frontend": "npm start --prefix packages/react-frontend",
+    "start": "concurrently \"npm run backend\" \"npm run frontend\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "concurrently": "^8.2.1",
     "create-react-app": "^5.0.1"
   },
   "workspaces": [
