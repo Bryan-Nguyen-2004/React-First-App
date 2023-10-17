@@ -2,6 +2,12 @@
 HTTP calls to the routes we define in the file and also sending back responses that we'll program. */
 import express from "express";
 import cors from "cors";
+import {
+    addUser,
+    getUsers,
+    findUserById,
+    deleteUser,
+} from "./models/user-services";
 
 /* Next, we create an instance of Express and define a constant to represent the port number we'll 
 use to listen to incoming HTTP requests. */
@@ -16,96 +22,73 @@ that, Express (as a middleware) will allow us to access JSON data seamlessly in 
 app.use(express.json());
 
 /* Then, we set up our first API endpoint with the app.get function.  */
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+app.get("/", (req, res) => {
+    res.send("Hello World!");
 });
 
-const users = { 
-    users_list : [
-        { 
-            id : 'xyz789',
-            name : 'Charlie',
-            job: 'Janitor',
-        },
-        {
-            id : 'abc123', 
-            name: 'Mac',
-            job: 'Bouncer',
-        },
-        {
-            id : 'ppp222', 
-            name: 'Mac',
-            job: 'Professor',
-        }, 
-        {
-            id: 'yat999', 
-            name: 'Dee',
-            job: 'Aspring actress',
-        },
-        {
-            id: 'zap555', 
-            name: 'Dennis',
-            job: 'Bartender',
-        }
-    ]
-};
-
-const findUserByName = (name) => users['users_list'].filter( (user) => user['name'] === name); 
-const findUserByJob = (job) => users['users_list'].filter( (user) => user['job'] === job); 
-const findUserById = (id) => users['users_list'].find((user) => user['id'] === id);
-const addUser = (user) => {
-    users['users_list'].push(user);
-    return user;
-}
-
-app.get('/users', (req, res) => {
+app.get("/users", (req, res) => {
     const name = req.query.name;
     const job = req.query.job;
-    let result = users
 
-    if (name) {
-        result = {users_list: findUserByName(name)};
-    }
-    if (job) {
-        result = {users_list: findUserByJob(job)};
-    }
-
-    res.send(result);
+    getUsers(name, job)
+        .then((users) => {
+            const result = { users_list: users };
+            res.send(result);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send("Error getting users.");
+        });
 });
 
-app.get('/users/:id', (req,res) => {
+app.get("/users/:id", (req, res) => {
     const id = req.params.id;
-    let result = findUserById(id);
-    if (result === undefined) {
-        res.status(404).send('Resource not found.');
-    } else {
-        res.send(result);
-    }
+
+    findUserById(id)
+        .then((user) => {
+            if (user) {
+                res.send(user);
+            } else {
+                res.status(404).send("User not found.");
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send("Error finding user.");
+        });
 });
 
-app.post('/users', (req, res) => {
-    let userToAdd = req.body;
-    if (!userToAdd.hasOwnProperty('id')) {
-        const id = Math.floor(100000 + (Math.random() * 900000))
-        userToAdd = Object.assign({ id }, userToAdd);
-    }
-    addUser(userToAdd);
-    res.status(201).send(userToAdd);
+app.post("/users", (req, res) => {
+    let user = req.body;
+
+    addUser(user)
+        .then((user) => {
+            res.status(201).json(user);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send("Error adding user.");
+        });
 });
 
-app.delete('/users/:id', (req, res) => {
+app.delete("/users/:id", (req, res) => {
     const id = req.params.id;
-    const filtered = users['users_list'].filter((user) => user['id'] !== id);
 
-    if (filtered.length === users.users_list.length) {
-        res.status(404).send();
-    } else {
-        users["users_list"] = filtered
-        res.status(204).send();
-    }
-})
+    deleteUser(id)
+        .then((user) => {
+            if (user) {
+                res.status(204).send();
+            } else {
+                res.status(404).send("User not found.");
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send("Error deleting user.");
+        });
+});
 
 /* Finally, we make our backend server listen to incoming http requests on the defined port number. */
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
-});      
+});
