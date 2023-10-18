@@ -2,12 +2,7 @@
 HTTP calls to the routes we define in the file and also sending back responses that we'll program. */
 import express from "express";
 import cors from "cors";
-import {
-    addUser,
-    getUsers,
-    findUserById,
-    deleteUser,
-} from "./models/user-services";
+import userServices from './models/user-services.js';
 
 /* Next, we create an instance of Express and define a constant to represent the port number we'll 
 use to listen to incoming HTTP requests. */
@@ -30,7 +25,7 @@ app.get("/users", (req, res) => {
     const name = req.query.name;
     const job = req.query.job;
 
-    getUsers(name, job)
+    userServices.getUsers(name, job)
         .then((users) => {
             const result = { users_list: users };
             res.send(result);
@@ -44,7 +39,7 @@ app.get("/users", (req, res) => {
 app.get("/users/:id", (req, res) => {
     const id = req.params.id;
 
-    findUserById(id)
+    userServices.findUserById(id)
         .then((user) => {
             if (user) {
                 res.send(user);
@@ -61,7 +56,7 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res) => {
     let user = req.body;
 
-    addUser(user)
+    userServices.addUser(user)
         .then((user) => {
             res.status(201).json(user);
         })
@@ -74,7 +69,7 @@ app.post("/users", (req, res) => {
 app.delete("/users/:id", (req, res) => {
     const id = req.params.id;
 
-    deleteUser(id)
+    userServices.deleteUser(id)
         .then((user) => {
             if (user) {
                 res.status(204).send();

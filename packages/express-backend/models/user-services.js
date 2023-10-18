@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import userModel from "./user";
+import userModel from "./user.js";
 
 /* Debugging Mode: Mongoose will log all queries it executes to the console */
 mongoose.set("debug", true);
@@ -10,11 +10,12 @@ mongoose.set("debug", true);
     useUnifiedTopology: use the new Server Discovery and Monitoring engine,
     Provides better support for replica sets and sharded clusters. */
 mongoose
-    .connect("mongodb://localhost:27017/users", {
+    .connect("mongodb://127.0.0.1:27017/users", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
     .catch((error) => console.log(error));
+/* had to change "mongodb://localhost:27017/users" to "mongodb://127.0.0.1:27017/users" */
 
 function getUsers(name, job) {
     let promise;
